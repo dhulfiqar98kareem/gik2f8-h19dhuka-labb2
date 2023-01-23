@@ -146,7 +146,7 @@ function saveTask() {
     title: todoForm.title.value,
     description: todoForm.description.value,
     dueDate: todoForm.dueDate.value,
-    completed: false
+    completed: false,
   };
   /* Ett objekt finns nu som har egenskaper motsvarande hur vi vill att uppgiften ska sparas ner på servern, med tillhörande värden från formulärets fält. */
 
@@ -179,7 +179,8 @@ function renderList() {
 
     /* Här används todoListElement, en variabel som skapades högt upp i denna fil med koden const todoListElement = document.getElementById('todoList');
      */
-    tasks.sort((a, b) => (a.dueDate < b.dueDate ? 1 : a.dueDate > b.dueDate ? -1 : 0));
+// sortera tasks från due date
+  tasks.sort((a, b) => (a.dueDate < b.dueDate ? 1 : a.dueDate > b.dueDate ? -1 : 0));
     /* Först sätts dess HTML-innehåll till en tom sträng. Det betyder att alla befintliga element och all befintlig text inuti todoListElement tas bort. Det kan nämligen finnas list-element däri när denna kod körs, men de tas här bort för att hela listan ska uppdateras i sin helhet. */
     todoListElement.innerHTML = '';
 
@@ -187,22 +188,17 @@ function renderList() {
 
     /* Koll om det finns någonting i tasks och om det är en array med längd större än 0 */
     if (tasks && tasks.length > 0) {
-      /* Om tasks är en lista som har längd större än 0 loopas den igenom med forEach. forEach tar, likt then, en callbackfunktion. Callbackfunktionen tar emot namnet på varje enskilt element i arrayen, som i detta fall är ett objekt innehållande en uppgift.  */
       tasks.forEach((task) => {
-        /* Om vi bryter ned nedanstående rad får vi något i stil med:
-        1. todoListElement: ul där alla uppgifter ska finnas
-        2. insertAdjacentHTML: DOM-metod som gör att HTML kan läggas till inuti ett element på en given position
-        3. "beforeend": positionen där man vill lägga HTML-koden, i detta fall i slutet av todoListElement, alltså längst ned i listan. 
-        4. renderTask(task) - funktion som returnerar HTML. 
-        5. task (objekt som representerar en uppgift som finns i arrayen) skickas in till renderTask, för att renderTask ska kunna skapa HTML utifrån egenskaper hos uppgifts-objektet. 
-        */
-
-        /* Denna kod körs alltså en gång per element i arrayen tasks, dvs. en  gång för varje uppgiftsobjekt i listan. */
-        todoListElement.insertAdjacentHTML('beforeend', renderTask(task));
+        if (task.completed) {
+          todoListElement.insertAdjacentHTML("beforeend", renderTask(task));
+        } else {
+          todoListElement.insertAdjacentHTML("afterbegin", renderTask(task));
+        }
       });
     }
   });
 }
+
 
 /* renderTask är en funktion som returnerar HTML baserat på egenskaper i ett uppgiftsobjekt. 
 Endast en uppgift åt gången kommer att skickas in här, eftersom den anropas inuti en forEach-loop, där uppgifterna loopas igenom i tur och ordning.  */
